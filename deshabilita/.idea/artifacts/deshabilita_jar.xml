@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="deshabilita:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/deshabilita_jar</output-path>
+    <root id="archive" name="deshabilita.jar">
+      <element id="module-output" name="deshabilita" />
+    </root>
+  </artifact>
+</component>
