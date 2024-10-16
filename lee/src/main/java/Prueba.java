@@ -17,6 +17,7 @@ public class Prueba {
 
             ActualizadorTabla actualizador = new ActualizadorTabla();
             actualizador.actualizarTabla(losProductos, "GVA17");
+
             actualizador.cerrarConexion();
 
             if (FicheroSalida.noHayCambios()){

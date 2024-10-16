@@ -1,6 +1,9 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -11,7 +14,7 @@ public class ActualizadorTabla {
     public ActualizadorTabla() {
         try {
             Properties config = Configuracion.lee(".//config.properties");
-            connection = new Conector(config.getProperty("empresa"),config.getProperty("servidor"),config.getProperty("puerto")).getConnection();
+            connection = new Conector(config.getProperty("empresa"), config.getProperty("servidor"), config.getProperty("puerto")).getConnection();
         } catch (FileNotFoundException e) {
             CentralLogger.logger.error(e);
             throw new RuntimeException(e);
@@ -50,11 +53,29 @@ SET FILLER = @filler,
                 pstmt.setString(2, dato.getCodigo()); // Define la condición para la actualización
                 pstmt.setInt(3, dato.getLista()); // Establece el valor para la columna
                 int cuantos = pstmt.executeUpdate(); // Ejecuta la actualización
-                if (cuantos!=1){
-                    FicheroSalida.write(cuantos+" - "+dato);
+                if (cuantos != 1) {
+                    FicheroSalida.write(cuantos + " - " + dato);
                 }
-                CentralLogger.logger.info("{}-{}",cuantos,dato);
+                CentralLogger.logger.info("{}-{}", cuantos, dato);
             }
+
+            //   Para las listas 4 y 1
+            String sql_actualiza_4_1 = "UPDATE gva17 SET precio = g2.precio FROM gva17 " +
+                    "JOIN gva17 AS g2 ON gva17.cod_articu = g2.cod_articu  " +
+                    "WHERE gva17.precio = 0 AND gva17.nro_de_lis = 4 AND g2.nro_de_lis = 1;";
+
+            // Para las listas 3 y 2
+            String sql_actualiza_3_2 = "UPDATE gva17 SET precio = g2.precio FROM gva17 " +
+                    "JOIN gva17 AS g2 ON gva17.cod_articu = g2.cod_articu " +
+                    "WHERE gva17.precio = 0 AND gva17.nro_de_lis = 3 AND g2.nro_de_lis = 2;";
+
+            Statement stmt = connection.createStatement();
+            int i1 = stmt.executeUpdate(sql_actualiza_4_1);
+            int i2 = stmt.executeUpdate(sql_actualiza_3_2);
+
+            CentralLogger.logger.info("{}-{}", i1, sql_actualiza_4_1);
+            CentralLogger.logger.info("{}-{}", i2, sql_actualiza_3_2);
+
         } catch (SQLException e) {
             CentralLogger.logger.error(e);
         } catch (IOException e) {
